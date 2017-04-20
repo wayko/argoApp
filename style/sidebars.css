@@ -1,0 +1,37 @@
+.rsidebar {
+float: right;
+height: 300px; 
+padding-right: 15px;
+}
+.lsidebar {
+float: left;	
+height: 300px; 
+padding-right: 15px;	
+}
+#rsb{
+margin-left: 0;
+padding-left: 0;
+}
+.navbar{
+padding: 4px;
+background: #B2CCFF;
+list-style-type:none;
+width: 120px;
+border-bottom:1px blue solid;
+margin-left: -40px;
+}
+.navbarHeader {
+padding: 4px;
+background: #6699FF;
+border: 1px blue double;
+list-style-type:none;
+height: 30px;
+}
+.navbarHeader0 {
+padding: 4px;
+background: #6699FF;
+border: 1px blue double;
+list-style-type:none;
+height: 30px;
+margin-left: -40px;
+}
