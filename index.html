@@ -23,37 +23,35 @@
 <head></head>
 <section class="">
 <form action="upload8.php" method="post" enctype="multipart/form-data">
-<!--/ Select Button for CSV File -->
-<!--<div class="col-sm-12 column">
-	 <p class="glyphicon glyphicon-circle-arrow-right"></p><label class="btn btn-danger btn-file">
-	<p class="largerfont">Select File to upload:</p>
-    <input type="file" name="fileToUpload" id="fileToUpload">
-	</label>
-	</div>-->
 	
 	<div class="col-sm-12 column">
-	 <p class="glyphicon glyphicon-pencil"></p>
 	 <p class="largerfont subject">Student ID:</p>
     <input type="text" name="subjectinput" id="subjectinput" placeholder="Max characters is 13" />
-	</label>
+	</label><p class="glyphicon glyphicon-pencil"></p>
 	</div>
+	
 	<div class="col-sm-12 column">
-	 <p class="glyphicon glyphicon-pencil"></p>
 	 <p class="largerfont subject">Mobile Number:</p>
-    <input type="text" name="phoneinput" id="phoneinput" placeholder="Max characters is 13" />
-	</label>
+    <input type="text" name="phoneinput" id="phoneinput" placeholder="1235555555" />
+	</label><p class="glyphicon glyphicon-pencil"></p>
 	</div>
-	<!-- 
-<div class="col-sm-12 column">
-	<span class="brdr glyphicon glyphicon-pencil"><textarea  id="message" rows="30"  cols="150" value="" class="form-control" name="messages" placeholder="Enter or paste message here:"></textarea></span>
-	</div>
+	
 	<div class="col-sm-12 column">
-	<span class="brdr glyphicon glyphicon-pencil"><textarea  id="xtramsg" rows="10"  cols="75" value="" class="form-control" name="xtramsg" placeholder="Enter or paste additional message here:"></textarea></span>
+	 <p class="largerfont subject">Email:</p>
+    <input type="email" name="emailinput" id="emailinput" placeholder="Enter Email" />
+	</label><p class="glyphicon glyphicon-pencil"></p>
 	</div>
-	-->
+
 	<div class="col-sm-12 column">
-    <p class="glyphicon glyphicon-circle-arrow-right"></p><button  class="btn btn-danger" type="submit" name="submit"> <p class="largerfont">Rename and Send</p></button>
+    </p><button  class="btn btn-danger" type="submit" name="submit"> <p class="largerfont">Rename and Send</p></button>
 	</div> 
+	
+	<div class="col-sm-12 column">
+	 <p class="largerfont subject">1 Month:</p>
+    <input type="radio" name="monthinput" id="monthinput" value="1Month" />
+	 <p class="largerfont subject">3 Month:</p>
+	 <input type="radio" name="monthinput" id="monthinput" value="3Month" />
+	</div>
 </form>
 </section>
 <footer>
@@ -62,3 +60,22 @@
 <script type="text/javascript" src="js/argo.js"></script>
 </body>
 </html>
+
+
+<!-- old code -->
+	<!--/ Select Button for CSV File -->
+<!--<div class="col-sm-12 column">
+	 <p class="glyphicon glyphicon-circle-arrow-right"></p><label class="btn btn-danger btn-file">
+	<p class="largerfont">Select File to upload:</p>
+    <input type="file" name="fileToUpload" id="fileToUpload">
+	</label>
+	</div>-->
+	<!-- 
+<div class="col-sm-12 column">
+	<span class="brdr glyphicon glyphicon-pencil"><textarea  id="message" rows="30"  cols="150" value="" class="form-control" name="messages" placeholder="Enter or paste message here:"></textarea></span>
+	</div>
+	<div class="col-sm-12 column">
+	<span class="brdr glyphicon glyphicon-pencil"><textarea  id="xtramsg" rows="10"  cols="75" value="" class="form-control" name="xtramsg" placeholder="Enter or paste additional message here:"></textarea></span>
+	</div>
+	-->
+<!-- old code -->

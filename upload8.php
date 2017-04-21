@@ -1,17 +1,54 @@
 <?php
-$target_dir = "uploads/";
+/* Variable declarations */
+$init_dir = "uploads/";
 $studentID = $_POST['subjectinput'];
 $phoneNum = $_POST['phoneinput'];
-$target_file = array_slice(scandir($target_dir),2);// . realpath($_FILES["fileToUpload"]["name"]);
-
+$email = $_POST['emailinput'];
+$monthSelect = $_POST['monthinput'];
 $tempArray = array();
-//$newFileName = rename($target_file, $newName);
+$semesterBegin = ("01-04-2017");
+$semesterEnd = ("01-05-2017");
+$plus1 = date("d-m-Y",strtotime("+1 day",strtotime($semesterEnd)));
+$minus5 = date("d-m-Y",strtotime("-1 day",strtotime($semesterBegin)));
+$currentDate = date("d-m-Y");
+$messageMonth;
+/* End declarations */
+
+/* Date Comparison */
+if(strtotime($currentDate) > strtotime($plus1))
+{
+	print_r("Semester has ended");
+}
+else if(strtotime($currentDate) < strtotime($minus5))
+{
+	print_r("Semester has not begun");
+}
+else if(strtotime($currentDate) < strtotime($plus1) && strtotime($currentDate) > strtotime($minus5))
+{
+	if($monthSelect == "1Month")
+{
+	$target_dir = $init_dir . "1Month/";  
+	$messageMonth = "1Mnth ";
+}
+else if($monthSelect == "3Month")
+{
+	$target_dir = $init_dir . "3Month/";
+	$messageMonth = "3Mnth ";
+	
+}
+else
+{
+	$target_dir = $init_dir . "1Month/";
+}
+
+$target_file = array_slice(scandir($target_dir),2);
+
+$newFileName = rename($target_file, $newName);
+
 foreach($target_file as $key => $value){
 	if(strlen($value) == 27)
 	{	
 	array_push($tempArray,$value);
-	
-	
 	}
 }
 
@@ -19,19 +56,27 @@ print_r("Only " . count($tempArray) . " files left for distribution <br />");
 $currentFile = $tempArray[0];
 $info = pathinfo($currentFile);
 $code = substr($info[filename],4);
-$newName = $studentID . '-' . date("d-m-Y") . ' ' . $currentFile;
+$newName = $studentID . '-' . $currentDate . ' ' . $currentFile;
+
+
 rename($target_dir . $currentFile, $target_dir. $newName);
 
 print_r("Old filename: " . $currentFile . "<br /> New filename: ". $newName . "<br />"); 
 print_r("Student ID: " . $studentID . "<br /> Mobile Number: ". $phoneNum . "<br />" . $code);
 
+/* Mailing Function */
 
+
+/* End Mailing Function */
+
+
+/* Texting function */
 
 $data = array(
     'User'          => 'tci',
     'Password'      => 'Tciez1',
     'PhoneNumbers'  => $phoneNum,
-    'Subject'       => 'Argo Key',
+    'Subject'       => $messageMonth . 'Key',
     'Message'       => $code,
     'MessageTypeID' => 1
 );
@@ -92,12 +137,9 @@ if ( 'Failure' == $json->Status ) {
          'Phone Numbers: ' . implode(', ' , $phoneNumbers).
 		 '</li>';
 
-
-
 getResults($MessageId);
 
 }
-
 
 function getResults($messageId)
 {	
@@ -111,7 +153,9 @@ curl_setopt($curl2, CURLOPT_SSL_VERIFYPEER, false);
 $response2 = curl_exec($curl2);
 curl_close($curl2);
 var_dump($curlResponseUrl);
- var_dump($response2);
+var_dump($response2);
+}
+/* End of Texting function */
 }
 
 ?>
