@@ -1,83 +1,29 @@
 <?php
-/* Variable declarations */
-$init_dir = "uploads/";
-$studentID = $_POST['subjectinput'];
-$phoneNum = $_POST['phoneinput'];
-$email = $_POST['emailinput'];
-$monthSelect = $_POST['monthinput'];
-$tempArray = array();
-$semesterBegin = ("01-04-2017");
-$semesterEnd = ("01-05-2017");
-$plus1 = date("d-m-Y",strtotime("+1 day",strtotime($semesterEnd)));
-$minus5 = date("d-m-Y",strtotime("-1 day",strtotime($semesterBegin)));
-$currentDate = date("d-m-Y");
-$messageMonth;
-/* End declarations */
-
-/* Date Comparison */
-if(strtotime($currentDate) > strtotime($plus1))
-{
-	print_r("Semester has ended");
+/* Get Result Function */
+function getResults($messageId)
+{	
+$curlResponseUrl = "https://app.eztexting.com/sending/reports/".$messageId."/?format=json&User=tci&Password=Tciez1"; 
+$curl2 = curl_init(); 
+curl_setopt($curl2,CURLOPT_URL,$curlResponseUrl);
+curl_setopt($curl2, CURLOPT_RETURNTRANSFER, 1);
+// If you experience SSL issues, perhaps due to an outdated SSL cert
+// on your own server, try uncommenting the line below
+curl_setopt($curl2, CURLOPT_SSL_VERIFYPEER, false);
+$response2 = curl_exec($curl2);
+curl_close($curl2);
+var_dump($curlResponseUrl);
+var_dump($response2);
 }
-else if(strtotime($currentDate) < strtotime($minus5))
-{
-	print_r("Semester has not begun");
-}
-else if(strtotime($currentDate) < strtotime($plus1) && strtotime($currentDate) > strtotime($minus5))
-{
-	if($monthSelect == "1Month")
-{
-	$target_dir = $init_dir . "1Month/";  
-	$messageMonth = "1Mnth ";
-}
-else if($monthSelect == "3Month")
-{
-	$target_dir = $init_dir . "3Month/";
-	$messageMonth = "3Mnth ";
-	
-}
-else
-{
-	$target_dir = $init_dir . "1Month/";
-}
-
-$target_file = array_slice(scandir($target_dir),2);
-
-$newFileName = rename($target_file, $newName);
-
-foreach($target_file as $key => $value){
-	if(strlen($value) == 27)
-	{	
-	array_push($tempArray,$value);
-	}
-}
-
-print_r("Only " . count($tempArray) . " files left for distribution <br />");
-$currentFile = $tempArray[0];
-$info = pathinfo($currentFile);
-$code = substr($info[filename],4);
-$newName = $studentID . '-' . $currentDate . ' ' . $currentFile;
-
-
-rename($target_dir . $currentFile, $target_dir. $newName);
-
-print_r("Old filename: " . $currentFile . "<br /> New filename: ". $newName . "<br />"); 
-print_r("Student ID: " . $studentID . "<br /> Mobile Number: ". $phoneNum . "<br />" . $code);
-
-/* Mailing Function */
-
-
-/* End Mailing Function */
-
+/* End Get Result Function */
 
 /* Texting function */
-
+function sendText($phoneNumb, $codes, $messageM){
 $data = array(
     'User'          => 'tci',
     'Password'      => 'Tciez1',
-    'PhoneNumbers'  => $phoneNum,
-    'Subject'       => $messageMonth . 'Key',
-    'Message'       => $code,
+    'PhoneNumbers'  => $phoneNumb,
+    'Subject'       => $messageM . 'Key',
+    'Message'       => 'This is the code for https://nytci.electude.com :' . $codes,
     'MessageTypeID' => 1
 );
 
@@ -140,22 +86,90 @@ if ( 'Failure' == $json->Status ) {
 getResults($MessageId);
 
 }
-
-function getResults($messageId)
-{	
-$curlResponseUrl = "https://app.eztexting.com/sending/reports/".$messageId."/?format=json&User=tci&Password=Tciez1"; 
-$curl2 = curl_init(); 
-curl_setopt($curl2,CURLOPT_URL,$curlResponseUrl);
-curl_setopt($curl2, CURLOPT_RETURNTRANSFER, 1);
-// If you experience SSL issues, perhaps due to an outdated SSL cert
-// on your own server, try uncommenting the line below
-curl_setopt($curl2, CURLOPT_SSL_VERIFYPEER, false);
-$response2 = curl_exec($curl2);
-curl_close($curl2);
-var_dump($curlResponseUrl);
-var_dump($response2);
 }
-/* End of Texting function */
-}
+/* End Texting Funtion */
 
+/* Mailing Function */
+
+function sendEmail($email, $subject, $message){
+	mail($email, $subject . ' Key', 'This is the code for https://nytci.electude.com :' .$message,'From:helpdesk@tcicollege.edu \r\n');
+}
+/* End Mailing Function */
+
+
+
+/* Variable declarations */
+$init_dir = "uploads/";
+$studentID = $_POST['subjectinput'];
+$phoneNum = $_POST['phoneinput'];
+$emailInfo = $_POST['emailinput'];
+$monthSelect = $_POST['monthinput'];
+$tempArray = array();
+$semesterBegin = ("01-04-2017");
+$semesterEnd = ("01-05-2017");
+$plus1 = date("d-m-Y",strtotime("+1 day",strtotime($semesterEnd)));
+$minus5 = date("d-m-Y",strtotime("-1 day",strtotime($semesterBegin)));
+$currentDate = date("d-m-Y");
+$messageMonth;
+
+/* End declarations */
+
+/* Get Folder Selection */
+if($monthSelect == "1Month")
+{
+	$target_dir = $init_dir . "1Month/";  
+	$messageMonth = "1Mnth ";
+}
+else if($monthSelect == "3Month")
+{
+	$target_dir = $init_dir . "3Month/";
+	$messageMonth = "3Mnth ";
+	
+}
+else
+{
+	$target_dir = $init_dir . "1Month/";
+}
+/* End Folder Selection */
+
+/* Date Comparison */
+if(strtotime($currentDate) > strtotime($plus1))
+{
+	print_r("Semester has ended");
+}
+else if(strtotime($currentDate) < strtotime($minus5))
+{
+	print_r("Semester has not begun");
+}
+else if(strtotime($currentDate) < strtotime($plus1) && strtotime($currentDate) > strtotime($minus5))
+{
+
+$target_file = array_slice(scandir($target_dir),2);
+
+foreach($target_file as $key => $value){
+	if(strlen($value) == 27)
+	{	
+	array_push($tempArray,$value);
+	}
+}	
+$currentFile = $tempArray[0];
+$info = pathinfo($currentFile);
+$code = substr($info[filename],4);
+$newName = $studentID . '-' . $currentDate . ' ' . $currentFile;
+
+
+
+print_r("Only " . count($tempArray) . " files left for distribution <br />");
+
+
+
+rename($target_dir . $currentFile, $target_dir. $newName);
+
+print_r("Old filename: " . $currentFile . "<br /> New filename: ". $newName . "<br />"); 
+print_r("Student ID: " . $studentID . "<br /> Mobile Number: ". $phoneNum . "<br />" . $code);
+
+
+sendText($phoneNum,$code,$messageMonth);
+sendEmail($emailInfo,$messageMonth,$code);
+}
 ?>
