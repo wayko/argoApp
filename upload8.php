@@ -1,5 +1,30 @@
 <?php
-	/* Get Result Function */
+	
+	/* Variable declarations */
+	$init_dir = "uploads/";
+	$invalid_dir = "invalidcode/";
+	$studentID = $_POST['subjectinput'];
+	$phoneNum = $_POST['phoneinput'];
+	$emailInfo = $_POST['emailinput'];
+	$monthSelect = $_POST['monthinput'];
+	$tempArray = array();
+	$semesterBegin = ("01-04-2017");
+	$semesterEnd = ("01-05-2017");
+	$plus1 = date("d-m-Y",strtotime("+1 day",strtotime($semesterEnd)));
+	$minus5 = date("d-m-Y",strtotime("-1 day",strtotime($semesterBegin)));
+	$currentDate = date("d-m-Y");
+	$messageMonth;
+	$usedArray = array();
+	$isFound = false;
+	$isInvalid = $_POST['invalidcode'];
+	$domain = strstr($emailInfo, '@');
+	/* End declarations */
+	
+	/* Verify if textboxes are not empty and formatted correctly */
+	if($studentID != NULL && $phoneNum != NULL && $emailInfo != NULL){
+		if(ctype_digit($studentID) && $domain == '@live.tcicollege.edu' || ctype_digit($studentID) && $domain == '@tcicollege.edu')
+		{
+			/* Get Result Function */
 	function getResults($messageId)
 	{	
 		$curlResponseUrl = "https://app.eztexting.com/sending/reports/".$messageId."/?format=json&User=tci&Password=Tciez1"; 
@@ -110,23 +135,7 @@
 	}
 	/* End Rename Function */
 
-	/* Variable declarations */
-	$init_dir = "uploads/";
-	$studentID = $_POST['subjectinput'];
-	$phoneNum = $_POST['phoneinput'];
-	$emailInfo = $_POST['emailinput'];
-	$monthSelect = $_POST['monthinput'];
-	$tempArray = array();
-	$semesterBegin = ("01-04-2017");
-	$semesterEnd = ("01-05-2017");
-	$plus1 = date("d-m-Y",strtotime("+1 day",strtotime($semesterEnd)));
-	$minus5 = date("d-m-Y",strtotime("-1 day",strtotime($semesterBegin)));
-	$currentDate = date("d-m-Y");
-	$messageMonth;
-	$usedArray = array();
-	$isFound = false;
 
-	/* End declarations */
 
 	/* Get Folder Selection */
 	if($monthSelect == "1Month")
@@ -170,17 +179,46 @@
 				array_push($usedArray,$value);
 			}
 		}
-		$usedArrayCount = count($usedArray);
+		
 		
 		
 		while(list(, $val) = each($usedArray)){
 		if (substr($val,0,6) == $studentID)
 		{
 			$codeFound = substr($val,22,19);
-			print_r($studentID . ' is found <br /> Their code is ' . $codeFound);
+			print_r($studentID . ' is found <br /> Their code is ' . $codeFound . "<br />");
 			$isFound = true;
+			
+			
+			if($isInvalid == 'invalidcode')
+			{
+				copy($target_dir . $val,$invalid_dir . 'invalid'.$val);
+				unlink($target_dir . $val);
+				$currentFile = $tempArray[0];
+				$info = pathinfo($currentFile);
+				$code = substr($info['filename'],4);
+				$newName = $studentID . '-' . $currentDate . ' ' . $currentFile;
+
+				print_r("Only " . count($tempArray) . " files left for distribution <br />");
+				$oldFileName = $target_dir . $currentFile;
+				$newFileName = $target_dir. $newName;
+				
+				rename_win($oldFileName,$newFileName );
+				
+				print_r("Old filename: " . $currentFile . "<br /> New filename: ". $newName . "<br />"); 
+				print_r("Student ID: " . $studentID . "<br /> Mobile Number: ". $phoneNum . "<br />" . $code);
+
+				sendText($phoneNum,$code,$messageMonth);
+				sendEmail($emailInfo,$messageMonth,$code);
+			}
+			else
+			{
 			sendText($phoneNum,$codeFound,$messageMonth);
 			sendEmail($emailInfo,$messageMonth,$codeFound);
+			}
+			
+			
+			
 			break 1;	
 		}	
 	} 
@@ -202,6 +240,36 @@
 
 				sendText($phoneNum,$code,$messageMonth);
 				sendEmail($emailInfo,$messageMonth,$code);
+			}
+		}
 	}
-}	
+	else
+	{
+		if(ctype_digit($studentID) == false){
+		print_r("Student ID must be numerical <br />");
+		}
+		if($domain != '@live.tcicollege.edu' || $domain != '@tcicollege.edu')
+		{
+			print_r($domain . "<br /> Email should be either from @live.tcicollege.edu or @tcicollege.edu domain<br/>");
+		}
+	}
+	}
+	else
+	{
+		if($studentID == NULL)
+		{
+			print_r("Student Field must be populated </br>");
+		}
+		if($phoneNum == NULL)
+		{
+			print_r("Phone Number Field must be populated<br />");
+		}
+		if($emailInfo == NULL)
+		{
+			print_r("Email Field must be populated<br />");
+		}
+	}
+	/* End of Verification Section */
+		
+
 ?>
