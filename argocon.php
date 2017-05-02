@@ -1,7 +1,12 @@
 <?php
 
 $returnArray = array();
+$rowArray = array();
 $cellNumber;
+$init_dir = "uploads/";
+$invalid_dir = "invalidcode/";
+$messageMonth;
+
 $con = odbc_connect("Driver={SQL Server};Server=T3-CAMPUSVUESQL;Database=C2000", "admstat", "b4v0e1jj");
 if (!$con)
   {
@@ -12,9 +17,9 @@ if (!$con)
   $result = odbc_exec($con,$sql);
   $count = odbc_num_rows($result);
 	
-	echo "<table><tr>";
+
 	if($count<1){
-	
+	echo("No student Found");
 }
 else {
 	for($i = 0; $i < $count; $i++)
@@ -23,30 +28,61 @@ else {
 	while($row = odbc_fetch_row($result))
 	{
 	
-		echo '<td class="red">'.odbc_result($row, 'StuNum').'</td>';
-		echo '<td class="red">'.odbc_result($row, 'StudentName').'</td>';
-		echo '<td class="red">'.odbc_result($row, 'email').'</td>';
-		echo '<td class="red">'.odbc_result($row, 'MobileNumber').'</td>';
-		echo '<td class="red">'.odbc_result($row, 'OtherPhone').'</td>';
-		echo '<td class="red">'.odbc_result($row, 'Phone').'</td></tr>';
+		$stuNum = odbc_result($result, 'StuNum');
+		$stuName = odbc_result($result, 'StudentName');
+		$stuEmail = odbc_result($result, 'email');
+		$stuMobile = odbc_result($result, 'MobileNumber');
+		$stuOther = odbc_result($result, 'OtherPhone');
+		$stuPhone = odbc_result($result, 'Phone');
+		$startDate = odbc_result($result, 'TermStartDate');
+		$endDate = odbc_result($result, 'TermEndDate');
 		
-		$rowArray['StuNum'] = $row['StuNum'];
-		$rowArray['StudentName'] = $row['StudentName'];
-		$rowArray['email'] = $row['email'];
-		$rowArray['MobileNumber'] = $row['MobileNumber'];
-		$rowArray['OtherNumber'] = $row['OtherNumber'];
-		$rowArray['Phone'] = $row['Phone'];
+		$rowArray['StuNum'] = $stuNum;
+		$rowArray['StudentName'] = $stuName;
+		$rowArray['email'] = $stuEmail;
+		$rowArray['MobileNumber'] = $stuMobile;
+		$rowArray['OtherNumber'] = $stuOther;
+		$rowArray['Phone'] = $stuPhone;
+		$rowArray['TermStartDate'] = $startDate;
+		$rowArray['TermEndDate'] = $endDate;
 		
 		array_push($returnArray,$rowArray);
 	}
 }
 }
 
-echo '</table>';
+$currentDate = date("m/d/Y");
+$amountOfDays = strtotime($currentDate) - strtotime($startDate) ;
+print_r($currentDate  . ' ' . $startDate . '  ' .$amountOfDays .' '.floor($amountOfDays / (60 * 60 * 24)) . '<br/>');
+if(floor($amountOfDays / (60 * 60 * 24)) < 28)
+{
+	$target_dir = $init_dir . "1Month/";  
+	$messageMonth = "1Mnth ";
+	
+	
+}	
+else
+{
+	$target_dir = $init_dir . "3Month/";
+	$messageMonth = "3Mnth ";
+	
+}
 
-echo $result['StuNum'];
+/* echo $result['StuNum'];*/
 $studentList = json_encode($returnArray);
-$fullList = json_decode($studentList);
+$fullList = json_decode($studentList); 
 
-  
+
+foreach($fullList as $fList)
+  {
+	  
+	$fStuNum = $fList->StuNum;
+	$fStuName = $fList->StudentName;
+	$fMoble = $fList->MobileNumber;
+	$fOther = $fList->OtherNumber;
+	$fPhone = $fList->Phone;
+	
+  }
+
+  print_r($target_dir);
 ?>
