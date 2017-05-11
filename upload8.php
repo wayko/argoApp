@@ -8,8 +8,8 @@
 	$emailInfo = $_POST['emailinput'];
 	$monthSelect = $_POST['monthinput'];
 	$tempArray = array();
-	$semesterBegin = ("01-04-2017");
-	$semesterEnd = ("01-05-2017");
+	$semesterBegin = ("01-05-2017");
+	$semesterEnd = ("28-08-2017");
 	$plus1 = date("d-m-Y",strtotime("+1 day",strtotime($semesterEnd)));
 	$minus5 = date("d-m-Y",strtotime("-1 day",strtotime($semesterBegin)));
 	$currentDate = date("d-m-Y");
@@ -42,7 +42,8 @@
 	/* End Get Result Function */
 
 	/* Texting function */
-	function sendText($phoneNumb, $codes, $messageM){
+	function sendText($phoneNumb, $codes, $messageM)
+	{
 		$data = array(
 		'User'          => 'tci',
 		'Password'      => 'Tciez1',
@@ -122,7 +123,8 @@
 	/* End Mailing Function */
 
 	/* Rename Function */
-	function rename_win($oldfile,$newfile) {
+	function rename_win($oldfile,$newfile) 
+	{
 
 	if (!rename($oldfile,$newfile)) {
 		if (copy ($oldfile,$newfile)) {
