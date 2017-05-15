@@ -11,6 +11,7 @@ $invalid_dir = "invalidcode/";
 $messageMonth;
 $i = 0;
 $currentDate2 = date("d-m-Y");
+$codeFound;
 $con = odbc_connect("Driver={SQL Server};Server=T3-CAMPUSVUESQL;Database=C2000", "admstat", "b4v0e1jj");
 
 			/* Get Result Function */
@@ -30,15 +31,15 @@ $con = odbc_connect("Driver={SQL Server};Server=T3-CAMPUSVUESQL;Database=C2000",
 	}
 	/* End Get Result Function */
 	
-	function writeText($phoneNumb, $codes, $messageM, $email)
+	function writeText($studentId, $phoneNumb, $codes, $messageM)
 	
 	{
-		echo $email . '-' .$phoneNumb . '-' . $messageM . '-' . $codes . '<br />';
+		echo $studentId . '-' .$phoneNumb . '-' . $messageM . '-' . $codes . '<br />';
 	}
 	
 
 	/* Texting function */
-	function sendText($phoneNumb, $codes, $messageM)
+	function sendText($studentId,$phoneNumb, $codes, $messageM)
 	{
 		$data = array(
 		'User'          => 'tci',
@@ -211,9 +212,20 @@ foreach($target_file as $key => $value)
 $studentList = json_encode($returnArray);
 $fullList = json_decode($studentList); 
 
+function studentFound($studentID, $used)
+{
+	
+	
+	while(list(, $val) = each($used)){
+		if (substr($val,0,6) == $studentID)
+		{
+			$codeFound = substr($val,22,19);
+			print_r($studentID . ' is found <br /> Their code is ' . $codeFound . "<br />");
+		}
+	return $codeFound;
+}
 
-
-
+}
 foreach($fullList as $fList)
   {
 	  
@@ -248,44 +260,17 @@ foreach($fullList as $fList)
 	}
 	$phone = preg_replace('/\D+/', '', $cellNumber);
 	//echo $phone . '<br />';
+	$codeGiven = studentFound($fStuNum, $usedArray);
+	print_r($codeGiven);
 	
-	while(list(, $val) = each($usedArray)){
-		if (substr($val,0,6) == $fStuNum)
-		{
-			$codeFound = substr($val,22,19);
-			print_r($studentID . ' is found <br /> Their code is ' . $codeFound . "<br />");
-			$isFound = true;
-			writeText($phone,$codeFound,$messageMonth);
-			//sendText($phoneNum,$codeFound,$messageMonth);
-			//sendEmail($emailInfo,$messageMonth,$codeFound);
-			}
-			
-			
-			
-			break 1;	
-		}
-	if($isFound == false)
-	{
-	
-		$currentFile = $tempArray[$i];
-				$info = pathinfo($currentFile);
-				$code = substr($info['filename'],4);
-				$newName = $fStuNum . '-' . $currentDate2 . ' ' . $currentFile;
-
-				//print_r("Only " . count($tempArray) . " files left for distribution <br />");
-				$oldFileName = $target_dir . $currentFile;
-				$newFileName = $target_dir. $newName;
-				
-				rename_win($oldFileName,$newFileName );
-				
-				//print_r("Old filename: " . $currentFile . "<br /> New filename: ". $newName . "<br />"); 
-				//print_r("Student ID: " . $fStuNum . "<br /> Mobile Number: ". $phone . "<br />" . $code);
-				writeText($phone,$code,$messageMonth, $fEmail);
-				//sendText($phone,$code,$messageMonth);
-				//sendEmail($fEmail,$messageMonth,$code);
-				$i = $i+1;
+	if(isset($codeGiven)){
+		$isFound = true;
 	}
+	else
+	{
+		$isFound = false;
+	}
+	
+	
   }
-
-
 ?>
